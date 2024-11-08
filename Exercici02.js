@@ -49,6 +49,8 @@ document.getElementById('startButton').addEventListener('click', function() {
         const newWindow = window.open('', `Window${windowsId}`, `width=${windowWidth},height=${windowHeight},left=${left},top=${top}`);
         windowsId++;
         windowsCounter++;
+        document.getElementById("windows_counter").textContent = `Active windows: ${windowsCounter}`;
+        document.getElementById("windows_total_counter").textContent = `Total windows created: ${windowsId}`;
 
         if (newWindow) {
             newWindow.document.write(`
@@ -67,6 +69,7 @@ document.getElementById('startButton').addEventListener('click', function() {
                         firstClickWindow = null;
                         firstClickColor = null;
                         windowsCounter = windowsCounter - 2;
+                        document.getElementById("windows_counter").textContent = `Active windows: ${windowsCounter}`;
                         if (windowsCounter == 0){
                             clearInterval(countdownInterval);
                             document.getElementById("message").textContent = "CONGRATULATIONS, YOU WON!";
