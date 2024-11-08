@@ -1,9 +1,36 @@
+document.getElementById("finishButton").disabled = true;
+
 document.getElementById('startButton').addEventListener('click', function() {
+
+    document.getElementById("startButton").disabled = true;
+
+    document.getElementById('finishButton').addEventListener('click', function() {
+        clearInterval(countdownInterval);
+            document.getElementById("finishButton").disabled = true;
+            windows.forEach(win => {
+                if (win && !win.closed) {
+                    win.close();
+                }
+            });
+            windows.length = 0;
+            document.getElementById("message").textContent = "OHHH, YOU LOST, YOU CAN TRY AGAIN!";
+            document.getElementById("startButton").disabled = false;
+            windowsId = 0;
+            windowsCounter = 0;
+    });
     
     let countdown = 30;
     const countdownDisplay = document.getElementById('countdownDisplay');
+    const windows = [];
+
+    let firstClickWindow = null;
+    let firstClickColor = null;
+    let firstWindows = true;
+    let windowsId = 0;
+    let windowsCounter = 0;
 
     const countdownInterval = setInterval(() => {
+        document.getElementById("finishButton").disabled = false;
         countdownDisplay.textContent = countdown;
         countdown--;
         if (countdown === 27) {
@@ -11,6 +38,17 @@ document.getElementById('startButton').addEventListener('click', function() {
         }
         if (countdown < 0) {
             clearInterval(countdownInterval);
+            document.getElementById("finishButton").disabled = true;
+            windows.forEach(win => {
+                if (win && !win.closed) {
+                    win.close();
+                }
+            });
+            windows.length = 0;
+            document.getElementById("message").textContent = "OHHH, YOU LOST, YOU CAN TRY AGAIN!";
+            document.getElementById("startButton").disabled = false;
+            windowsId = 0;
+            windowsCounter = 0;
         }
     }, 1000);
     
@@ -21,12 +59,6 @@ document.getElementById('startButton').addEventListener('click', function() {
         "VERDE": "#008000",
         "ROJO": "#FF0000"
     };
-
-    let firstClickWindow = null;
-    let firstClickColor = null;
-    let firstWindows = true;
-    let windowsId = 0;
-    let windowsCounter = 0;
 
     const screenWidth = window.screen.width;
     const screenHeight = window.screen.height;
@@ -47,6 +79,7 @@ document.getElementById('startButton').addEventListener('click', function() {
         if (firstWindows){ firstWindows = false;}
 
         const newWindow = window.open('', `Window${windowsId}`, `width=${windowWidth},height=${windowHeight},left=${left},top=${top}`);
+        windows.push(newWindow);
         windowsId++;
         windowsCounter++;
         document.getElementById("windows_counter").textContent = `Active windows: ${windowsCounter}`;
@@ -72,7 +105,9 @@ document.getElementById('startButton').addEventListener('click', function() {
                         document.getElementById("windows_counter").textContent = `Active windows: ${windowsCounter}`;
                         if (windowsCounter == 0){
                             clearInterval(countdownInterval);
+                            document.getElementById("finishButton").disabled = true;
                             document.getElementById("message").textContent = "CONGRATULATIONS, YOU WON!";
+                            document.getElementById("startButton").disabled = false;
                         }
                     }else if (newWindow === firstClickWindow) {
                         randomColor = colors.filter(color => color !== randomColor)[Math.floor(Math.random() * (colors.length - 1))];
