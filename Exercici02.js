@@ -6,6 +6,9 @@ document.getElementById('startButton').addEventListener('click', function() {
     const countdownInterval = setInterval(() => {
         countdownDisplay.textContent = countdown;
         countdown--;
+        if (countdown === 27) {
+            startGame();
+        }
         if (countdown < 0) {
             clearInterval(countdownInterval);
         }
@@ -22,14 +25,13 @@ document.getElementById('startButton').addEventListener('click', function() {
     let firstClickWindow = null;
     let firstClickColor = null;
     let firstWindows = true;
-    let windowsCounter = 1;
+    let windowsId = 0;
+    let windowsCounter = 0;
 
     const screenWidth = window.screen.width;
     const screenHeight = window.screen.height;
     const windowWidth = 300;
     const windowHeight = 200;
-
-    startGame();
 
     function startGame(){
         for (let i = 1; i <= 7; i++) {
@@ -43,7 +45,9 @@ document.getElementById('startButton').addEventListener('click', function() {
         const left = firstWindows ? (screenWidth - windowWidth) / 2 : Math.floor(Math.random() * (screenWidth - windowWidth));
         const top = firstWindows ? (screenHeight - windowHeight) / 2 : Math.floor(Math.random() * (screenHeight - windowHeight));
         if (firstWindows){ firstWindows = false;}
-        const newWindow = window.open('', `Window${windowsCounter}`, `width=${windowWidth},height=${windowHeight},left=${left},top=${top}`);
+
+        const newWindow = window.open('', `Window${windowsId}`, `width=${windowWidth},height=${windowHeight},left=${left},top=${top}`);
+        windowsId++;
         windowsCounter++;
 
         if (newWindow) {
@@ -53,7 +57,6 @@ document.getElementById('startButton').addEventListener('click', function() {
                 </body>
             `);
             newWindow.document.body.onclick = function() {
-                console.log (`click ${randomColor}`)
                 if (!firstClickWindow) {
                     firstClickWindow = newWindow;
                     firstClickColor = randomColor;
@@ -63,13 +66,21 @@ document.getElementById('startButton').addEventListener('click', function() {
                         firstClickWindow.close();
                         firstClickWindow = null;
                         firstClickColor = null;
-                    } else if (newWindow === firstClickWindow) {
+                        windowsCounter = windowsCounter - 2;
+                        if (windowsCounter == 0){
+                            clearInterval(countdownInterval);
+                            document.getElementById("message").textContent = "CONGRATULATIONS, YOU WON!";
+                        }
+                    }else if (newWindow === firstClickWindow) {
                         randomColor = colors.filter(color => color !== randomColor)[Math.floor(Math.random() * (colors.length - 1))];
                         newWindow.document.body.setAttribute("style",`margin: 0; display: flex; align-items: center; justify-content: center; background-color: ${colorHex[randomColor]};`)
                         newWindow.document.querySelector('h1').textContent = randomColor;
                         firstClickWindow = null;
                         firstClickColor = null;
                         openWindows();
+                    }else{
+                        firstClickWindow = null;
+                        firstClickColor = null;
                     }
                 }
             };
