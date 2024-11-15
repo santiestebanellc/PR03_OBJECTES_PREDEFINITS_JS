@@ -1,3 +1,5 @@
+document.getElementById("message").textContent = getCookie("lastGame");
+
 document.getElementById("finishButton").disabled = true;
 
 document.getElementById('startButton').addEventListener('click', function() {
@@ -29,6 +31,8 @@ document.getElementById('startButton').addEventListener('click', function() {
     let windowsId = 0;
     let windowsCounter = 0;
 
+    document.getElementById("message").textContent = getCookie("lastGame");
+
     const countdownInterval = setInterval(() => {
         document.getElementById("finishButton").disabled = false;
         countdownDisplay.textContent = countdown;
@@ -46,6 +50,9 @@ document.getElementById('startButton').addEventListener('click', function() {
             });
             windows.length = 0;
             document.getElementById("message").textContent = "OHHH, YOU LOST, YOU CAN TRY AGAIN!";
+
+            setCookie("lastGame", `Ultima partida [PERDIDA]: ${windowsId} ventanas creadas.`,1);
+
             document.getElementById("startButton").disabled = false;
             windowsId = 0;
             windowsCounter = 0;
@@ -107,6 +114,9 @@ document.getElementById('startButton').addEventListener('click', function() {
                             clearInterval(countdownInterval);
                             document.getElementById("finishButton").disabled = true;
                             document.getElementById("message").textContent = "CONGRATULATIONS, YOU WON!";
+                            
+                            setCookie("lastGame", `Ultima partida [GANADA]: ${windowsId} ventanas creadas.`,1);
+
                             document.getElementById("startButton").disabled = false;
                         }
                     }else if (newWindow === firstClickWindow) {
@@ -124,5 +134,27 @@ document.getElementById('startButton').addEventListener('click', function() {
             };
         }
     }
-
+        
 });
+
+function setCookie(name, value, days) {
+    let expires = "";
+    if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+
+function getCookie(name) {
+    const nameEQ = name + "=";
+    const cookiesArray = document.cookie.split(';');
+    for (let cookie of cookiesArray) {
+        cookie = cookie.trim();
+        if (cookie.startsWith(nameEQ)) {
+            return cookie.substring(nameEQ.length);
+        }
+    }
+    return null;
+}
